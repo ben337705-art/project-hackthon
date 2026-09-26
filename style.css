@@ -1,0 +1,106 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0f172a;
+    color: #f8fafc;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+header {
+    margin-bottom: 24px;
+}
+
+header h1 {
+    color: #38bdf8;
+}
+
+.subtitle {
+    color: #94a3b8;
+}
+
+.metrics {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.card {
+    flex: 1;
+    background-color: #1e293b;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+}
+
+.card h3 {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin-bottom: 8px;
+}
+
+.card p {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.alert-card p {
+    color: #f87171;
+}
+
+.status-ok {
+    color: #4ade80;
+}
+
+.chart-section, .logs-section {
+    background-color: #1e293b;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    margin-bottom: 24px;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    color: #e2e8f0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #334155;
+}
+
+th {
+    color: #94a3b8;
+}
+
+.anomaly-row {
+    background-color: rgba(239, 68, 68, 0.15);
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.status-200 { background-color: #166534; color: #4ade80; }
+.status-401, .status-403 { background-color: #991b1b; color: #fca5a5; }
+.status-404 { background-color: #854d0e; color: #fde047; }
+.status-500 { background-color: #581c87; color: #e9d5ff; }

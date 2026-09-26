@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defensive Security Log Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Security Event Monitor</h1>
+            <p class="subtitle">Real-time log analysis and anomaly detection dashboard</p>
+        </header>
+
+        <section class="metrics">
+            <div class="card">
+                <h3>Total Requests</h3>
+                <p id="total-requests">0</p>
+            </div>
+            <div class="card alert-card">
+                <h3>Anomalies Detected</h3>
+                <p id="total-anomalies">0</p>
+            </div>
+            <div class="card">
+                <h3>System Status</h3>
+                <p id="system-status" class="status-ok">Active</p>
+            </div>
+        </section>
+
+        <section class="chart-section">
+            <h2>Status Code Distribution</h2>
+            <canvas id="statusChart"></canvas>
+        </section>
+
+        <section class="logs-section">
+            <h2>Recent Network Logs</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>IP Address</th>
+                        <th>Endpoint</th>
+                        <th>Status</th>
+                        <th>Alert Level</th>
+                    </tr>
+                </thead>
+                <tbody id="log-rows">
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script>
+        let chartInstance = null;
+
+        async function fetchLogs() {
+            try {
+                const response = await fetch('/api/logs');
+                const logs = await response.json();
+                updateDashboard(logs);
+            } catch (error) {
+                console.error("Error loading logs:", error);
+            }
+        }
+
+        function updateDashboard(logs) {
+            const tableBody = document.getElementById('log-rows');
+            tableBody.innerHTML = '';
+
+            let anomalies = 0;
+            const statusCounts = {};
+
+            logs.forEach(log => {
+                statusCounts[log.status] = (statusCounts[log.status] || 0) + 1;
+                if (log.is_anomaly) anomalies++;
+
+                const row = document.createElement('tr');
+                if (log.is_anomaly) row.classList.add('anomaly-row');
+
+                row.innerHTML = `
+                    <td>${log.timestamp}</td>
+                    <td>${log.ip}</td>
+                    <td>${log.endpoint}</td>
+                    <td><span class="badge status-${log.status}">${log.status}</span></td>
+                    <td>${log.is_anomaly ? '⚠️ Flagged' : 'Normal'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById('total-requests').innerText = logs.length;
+            document.getElementById('total-anomalies').innerText = anomalies;
+
+            renderChart(statusCounts);
+        }
+
+        function renderChart(statusCounts) {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const labels = Object.keys(statusCounts);
+            const data = Object.values(statusCounts);
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels.map(l => `HTTP ${l}`),
+                    datasets: [{
+                        label: 'Request Count',
+                        data: data,
+                        backgroundColor: ['#4caf50', '#ff9800', '#f44336', '#2196f3']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        fetchLogs();
+        setInterval(fetchLogs, 5000);
+    </script>
+</body>
+</html>
